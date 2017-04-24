@@ -1,0 +1,21 @@
+{
+    "name": "onex/espier-swoole",
+    "description": "A RESTful API Package for lumen",
+    "keywords": ["restful", "api", "lumen", "swoole"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Bryant Yan",
+            "email": "bryant.yan@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "laravel/lumen-framework": "5.4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Espier\\Swoole\\": "src"
+        }
+    }
+}
