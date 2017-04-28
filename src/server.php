@@ -27,7 +27,7 @@ class Server
     {
         $this->swooleServer = new swoole_http_server($app['config']['server.host'], 
                                                      $app['config']['server.port']); 
-        
+
         $this->swooleServer->set($app['config']['server.options']);
         $this->lockFile = $lockFile;
         $this->app = $app;

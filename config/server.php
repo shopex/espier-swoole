@@ -13,9 +13,9 @@ return [
     |
     */
     'options' => [
-        'user' => 'bryant',
-        'group' => 'staff',
-        'daemonize' => false,
-        'worker_num' => 4,
+        'user' => env('SERVER_USER'),
+        'group' => env('SERVER_GROUP'),
+        'daemonize' => env('SERVER_DAEMONIZE', false),
+        'worker_num' => env('SERVER_WORKER_NUM', 4)
     ],
 ];
