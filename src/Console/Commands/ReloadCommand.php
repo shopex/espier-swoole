@@ -30,14 +30,14 @@ EOF
 
     public function fire()
     {
-        $address = $input->getArgument('address');
+        $address = $this->argument('address');
         if (false === strpos($address, ':')) {
-            $address = $address.':'.$input->getOption('port');
+            $address = $address.':'.$this->option('port');
         }
 
         if ($this->sendSignal(SIGUSR1, $address)) {
 
-            $this->success(sprintf('Reload the espier web server listening on http://%s', $address));
+            $this->info(sprintf('Reload the espier web server listening on http://%s', $address));
 
         } else {
             return 1;

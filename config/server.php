@@ -18,4 +18,16 @@ return [
         'daemonize' => env('SERVER_DAEMONIZE', false),
         'worker_num' => env('SERVER_WORKER_NUM', 4)
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | worker start include 
+    |--------------------------------------------------------------------------
+    |
+    | worker 启动时需要include的文件, 默认加载路径为 bootstrap
+    |
+    */    
+    'worker_start_include' => [
+        'route.php',
+    ],
 ];

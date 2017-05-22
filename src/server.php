@@ -42,6 +42,20 @@ class Server
 
     public function onStart(swoole_http_server $server)
     {
+        /** 
+         * if ($files = $this->app['config']['server.worker_start_include']) {
+         *     $filesystem = $this->app['files'];
+         *     foreach($files as $file) {
+         *         $fileName = $this->app->basePath('bootstrap').'/'.$file;
+         *         if ($filesystem->isFile($fileName)) {
+         *             $filesystem->requireOnce($fileName);
+         *         }
+         *     }
+         * }
+         */
+        //require_once $this->app->basePath().'/bootstrap/route.php';
+
+
         if (isset($this->lockFile)) {
             file_put_contents($this->lockFile, $server->master_pid);
         }
