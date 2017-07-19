@@ -29,10 +29,7 @@ EOF
 
     public function fire()
     {
-        $address = $input->getArgument('address');
-        if (false === strpos($address, ':')) {
-            $address = $address.':'.$input->getOption('port');
-        }
+        list($address, $host, $port) = $this->initAddress();
 
         if ($this->sendSignal(SIGUSR2, $address)) {
 
@@ -41,13 +38,6 @@ EOF
         } else {
             return 1;
         }
-    }
-
-    protected function getOptions()
-    {
-        return [
-            ['port', 'p', InputOption::VALUE_REQUIRED, 'Address port number', '9058'],
-        ];
     }
 
     protected function getArguments()

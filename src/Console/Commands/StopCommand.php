@@ -29,10 +29,7 @@ EOF
 
     public function fire()
     {
-        $address = $this->argument('address');
-        if (false === strpos($address, ':')) {
-            $address = $address.':'.$this->option('port');
-        }
+        list($address, $host, $port) = $this->initAddress();
 
         if ($this->sendSignal(SIGTERM, $address))
         {

@@ -42,9 +42,9 @@ abstract class ServerCommand extends Command
             return true;
         }
 
-        list($hostname, $post) = explode(':', $address);
+        list($host, $post) = explode(':', $address);
 
-        $fp = @fsockopen($hostname, $post, $errno, $errstr, 5);
+        $fp = @fsockopen($host, $post, $errno, $errstr, 5);
 
         if (false !== $fp) {
             fclose($fp);
@@ -53,5 +53,21 @@ abstract class ServerCommand extends Command
         }
 
         return false;
+    }
+
+    protected function initAddress() {
+        $host = config('server.host');
+        $port = config('server.port');
+        if ($address = $this->argument('address')) {
+            if (false == strpos($address, ':')) {
+                $address = $address.':'.$port;
+            }
+            list($host, $port) = explode(':', $address);
+        }
+        $address = $host.':'.$port;
+        app('config')->set('server.host', $host);
+        app('config')->set('server.port', $port);
+
+        return [$address, $host, $port];
     }
 }

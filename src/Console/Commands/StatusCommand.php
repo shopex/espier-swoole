@@ -29,23 +29,13 @@ EOF
 
     public function fire()
     {
-        $address = $this->argument('address');
-        if (false === strpos($address, ':')) {
-            $address = $address.':'.$this->option('port');
-        }
+        list($address, $host, $port) = $this->initAddress();
 
         if ($this->isServerRunning($address)) {
             $this->info(sprintf('Espier web server still listening on http://%s', $address));
         } else {
             $this->warn(sprintf('No espier web server is listening on http://%s', $address));
         }
-    }
-
-    protected function getOptions()
-    {
-        return [
-            ['port', 'p', InputOption::VALUE_REQUIRED, 'Address port number', '9058'],
-        ];
     }
 
     protected function getArguments()

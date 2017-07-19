@@ -26,17 +26,13 @@ EOF
     
     public function fire()
     {
-        $address = $this->argument('address');
-
-        if (false == strpos($address, ':')) {
-            $address = $address.':'.$this->option('port');
-        }
+        
+        list($address, $host, $port) = $this->initAddress();
 
         if ($this->isOtherServerProcessRunning($address)) {
             if ($this->option('force')) {
                 return $this->call('espier:restart', [
-                    'address' => $this->argument('address'),
-                    '--port' => $this->option('port')
+                    'address' => $address
                 ]);
             } else {
                 $this->error(sprintf('A process is already listening http://%s', $address));
@@ -56,7 +52,6 @@ EOF
     protected function getOptions()
     {
         return [
-            ['port', 'p', InputOption::VALUE_REQUIRED, 'Address port number', '9058'],
             ['force', 'f', InputOption::VALUE_NONE, 'Force web server startup']
         ];
     }
@@ -64,7 +59,7 @@ EOF
     protected function getArguments()
     {
         return [
-            ['address', InputArgument::OPTIONAL, 'Address:port', '127.0.0.1']
+            ['address', InputArgument::OPTIONAL]
         ];
     }
 

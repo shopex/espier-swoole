@@ -30,10 +30,7 @@ EOF
 
     public function fire()
     {
-        $address = $this->argument('address');
-        if (false === strpos($address, ':')) {
-            $address = $address.':'.$this->option('port');
-        }
+        list($address, $host, $port) = $this->initAddress();
 
         // reload
         if ($this->sendSignal(SIGTERM, $address)) {
@@ -50,8 +47,7 @@ EOF
             $this->info(sprintf('Stopped the espier web server listening on http://%s', $address));
 
             return $this->call('espier:start', [
-                'address' => $this->argument('address'),
-                '--port' => $this->option('port')
+                'address' => $address
             ]);
         
         } else {
@@ -62,7 +58,6 @@ EOF
     protected function getOptions()
     {
        return [
-            ['port', 'p', InputOption::VALUE_REQUIRED, 'Address port number', '9058'],
             ['force', 'f', InputOption::VALUE_NONE, 'Force web server startup']
         ];
     }
