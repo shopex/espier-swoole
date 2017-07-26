@@ -59,7 +59,7 @@ EOF
     protected function getArguments()
     {
         return [
-            ['address', InputArgument::OPTIONAL]
+            ['address', InputArgument::OPTIONAL, 'Address:port']
         ];
     }
 

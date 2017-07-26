@@ -21,7 +21,7 @@ The <info>%command.name%</info> watch espier web server status:
 
 To change the default bind address and the default port use the <info>address</info> argument:
 
-  <info>php %command.full_name% 127.0.0.1:9058</info>
+  <info>php %command.full_name% 0.0.0.0:9058</info>
 
 EOF
         );
@@ -41,7 +41,7 @@ EOF
     protected function getArguments()
     {
         return [
-            ['address', InputArgument::OPTIONAL, 'Address:port', '127.0.0.1']
+            ['address', InputArgument::OPTIONAL, 'Address:port']
         ];
     }
 
