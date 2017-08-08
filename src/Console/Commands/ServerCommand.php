@@ -65,7 +65,6 @@ abstract class ServerCommand extends Command
             list($host, $port) = explode(':', $address);
         }
         $address = $host.':'.$port;
-        var_dump($address);
         app('config')->set('server.host', $host);
         app('config')->set('server.port', $port);
 

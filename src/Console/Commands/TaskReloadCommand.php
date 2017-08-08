@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class TaskReloadCommand extends Command
+class TaskReloadCommand extends ServerCommand
 {
     protected $name = 'espier:task_reload';
 
