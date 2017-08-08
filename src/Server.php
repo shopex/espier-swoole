@@ -88,24 +88,21 @@ class Server
     {
         $get     = isset($swooleRequest->get) ? $swooleRequest->get : [];
         $post    = isset($swooleRequest->post) ? $swooleRequest->post : [];
-        $server  = isset($swooleRequest->server) ? $swooleRequest->server : [];
-        $header  = isset($swooleRequest->header) ? $swooleRequest->header : [];
-        $files   = isset($swooleRequest->files) ? $swooleRequest->files : [];
+        $attributes = [];
         $cookie = isset($swooleRequest->cookie) ? $swooleRequest->cookie : [];
+        $files   = isset($swooleRequest->files) ? $swooleRequest->files : [];
+        $server = isset($swooleRequest->server) ? array_change_key_case($swooleRequest->server, CASE_UPPER) : [];
 
-        foreach($header as $key => $value) {
-            $server['http_'.$key] = $value;
-        }
-
-        foreach($server as $key => $value) {
-            $newServer[strtoupper($key)] = $value;
+        if (isset($swooleRequest->header)) {
+            foreach ($swooleRequest->header as $key => $value) {
+                $newKey = 'HTTP_' . strtoupper(str_replace('-', '_', $key));
+                $server[$newKey] = $value;
+            }
         }
         
-
         $content = $swooleRequest->rawContent() ?: null;
 
-        $symfonyRequest = new symfonyRequest($get, $post, []/* attributes */, $cookie, $files, $newServer, $content);
-
+        $symfonyRequest = new symfonyRequest($get, $post, $attributes, $cookie, $files, $server, $content);
         return $symfonyRequest;
     }
 
