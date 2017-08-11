@@ -89,8 +89,8 @@ class Server
         $get     = isset($swooleRequest->get) ? $swooleRequest->get : [];
         $post    = isset($swooleRequest->post) ? $swooleRequest->post : [];
         $attributes = [];
-        $cookie = isset($swooleRequest->cookie) ? $swooleRequest->cookie : [];
         $files   = isset($swooleRequest->files) ? $swooleRequest->files : [];
+        $cookie = isset($swooleRequest->cookie) ? $swooleRequest->cookie : [];
         $server = isset($swooleRequest->server) ? array_change_key_case($swooleRequest->server, CASE_UPPER) : [];
 
         if (isset($swooleRequest->header)) {
@@ -103,6 +103,7 @@ class Server
         $content = $swooleRequest->rawContent() ?: null;
 
         $symfonyRequest = new symfonyRequest($get, $post, $attributes, $cookie, $files, $server, $content);
+
         return $symfonyRequest;
     }
 
