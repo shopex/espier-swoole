@@ -12,21 +12,21 @@ use swoole_http_response;
 /**
  * Espier swoole server
  *
- * 目前目的只是针对API, 因此cookie的相关处理全部忽略掉 
+ * 目前目的只是针对API, 因此cookie的相关处理全部忽略掉
  * @author Bryant Yan <bryant.yan@gmail.com>
  */
 class Server
 {
     protected $lockFile;
-    
+
     protected $swooleServer;
 
     protected $app;
 
     public function __construct(Application $app, $lockFile = null)
     {
-        $this->swooleServer = new swoole_http_server($app['config']['server.host'], 
-                                                     $app['config']['server.port']); 
+        $this->swooleServer = new swoole_http_server($app['config']['server.host'],
+                                                     $app['config']['server.port']);
 
         $this->swooleServer->set($app['config']['server.options']);
         $this->lockFile = $lockFile;
@@ -42,7 +42,7 @@ class Server
 
     public function onStart(swoole_http_server $server)
     {
-        /** 
+        /**
          * if ($files = $this->app['config']['server.worker_start_include']) {
          *     $filesystem = $this->app['files'];
          *     foreach($files as $file) {
@@ -63,18 +63,12 @@ class Server
 
     public function onRequest(swoole_http_request $swooleRequest, swoole_http_response $swooleResponse)
     {
-        clearstatcache();
-        
-        $symfonyRequest = $this->dealWithRequest($swooleRequest);
+        $symfonyRequest = $this->handleRequest($swooleRequest);
+        $symfonyResponse = $this->app->handle($symfonyRequest);
 
-        $response = $this->app->handle($symfonyRequest);
+        $this->clean($symfonyRequest);
 
-        if ($response instanceof symfonyResponse) {
-            $symfonyResponse = $response->prepare($symfonyRequest);
-            $this->dealWithResponse($symfonyRequest, $symfonyResponse, $swooleResponse);
-        } else {
-            $swooleResponse->end(strval($response));
-        }
+        return $this->handleResponse($symfonyRequest, $swooleResponse, $symfonyResponse);
     }
 
     /**
@@ -84,8 +78,10 @@ class Server
      *
      * @return Request
      * */
-    protected function dealWithRequest(swoole_http_request $swooleRequest)
+    protected function handleRequest(swoole_http_request $swooleRequest)
     {
+        clearstatcache();
+
         $get     = isset($swooleRequest->get) ? $swooleRequest->get : [];
         $post    = isset($swooleRequest->post) ? $swooleRequest->post : [];
         $attributes = [];
@@ -99,7 +95,7 @@ class Server
                 $server[$newKey] = $value;
             }
         }
-        
+
         $content = $swooleRequest->rawContent() ?: null;
 
         $symfonyRequest = new symfonyRequest($get, $post, $attributes, $cookie, $files, $server, $content);
@@ -107,13 +103,18 @@ class Server
         return $symfonyRequest;
     }
 
-    protected function dealWithResponse(symfonyRequest $symfonyRequest, symfonyResponse $symfonyResponse, swoole_http_response $swooleResponse)
+    protected function handleResponse(symfonyRequest $symfonyRequest, swoole_http_response $swooleResponse, symfonyResponse $symfonyResponse)
     {
+        if (!$symfonyResponse instanceof symfonyResponse) {
+            return $swooleResponse->end(strval($symfonyResponse));
+        }
+
+        $symfonyResponse = $symfonyResponse->prepare($symfonyRequest);
+
         // status
         $swooleResponse->status($symfonyResponse->getStatusCode());
 
         // header
-
         foreach($symfonyResponse->headers->allPreserveCase() as $name => $values) {
             foreach($values as $value) {
                 $swooleResponse->header($name, $value);
@@ -124,6 +125,18 @@ class Server
         $swooleResponse->gzip();
 
         // content
-        $swooleResponse->end($symfonyResponse->getContent());
+        return $swooleResponse->end($symfonyResponse->getContent());
+    }
+
+    protected function clean(symfonyRequest $request)
+    {
+        if ($this->app->bound('registry')) {
+            foreach (config('doctrine.managers') as $mangerName => $v) {
+                app('registry')->getManager($mangerName)->getConfiguration()->getResultCacheImpl()->flushAll();
+                app('registry')->getManager($mangerName)->getConfiguration()->getQueryCacheImpl()->flushAll();
+                app('registry')->getManager($mangerName)->clear();
+                $this->app['api.auth']->setUser(null);
+            }
+        }
     }
 }
