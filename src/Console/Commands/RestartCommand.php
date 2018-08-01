@@ -28,7 +28,7 @@ EOF
         );
     }
 
-    public function fire()
+    public function handle()
     {
         list($address, $host, $port) = $this->initAddress();
 
@@ -49,7 +49,7 @@ EOF
             return $this->call('espier:start', [
                 'address' => $address
             ]);
-        
+
         } else {
             return 1;
         }

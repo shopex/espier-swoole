@@ -27,7 +27,7 @@ EOF
         );
     }
 
-    public function fire()
+    public function handle()
     {
         list($address, $host, $port) = $this->initAddress();
 

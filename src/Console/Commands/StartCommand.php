@@ -23,10 +23,10 @@ The <info>%command.name%</info> runs espier web server:
 EOF
         );
     }
-    
-    public function fire()
+
+    public function handle()
     {
-        
+
         list($address, $host, $port) = $this->initAddress();
 
         if ($this->isOtherServerProcessRunning($address)) {
@@ -41,14 +41,14 @@ EOF
                 return 1;
             }
         }
-        
+
         $this->info(sprintf('Espier web server listening on http://%s', $address));
 
         $server = new Server($this->getLaravel(), $this->getLockFile($address), []);
 
         $server->run();
     }
-    
+
     protected function getOptions()
     {
         return [

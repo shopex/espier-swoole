@@ -27,18 +27,18 @@ EOF
         );
     }
 
-    public function fire()
+    public function handle()
     {
         list($address, $host, $port) = $this->initAddress();
 
         if ($this->sendSignal(SIGTERM, $address))
         {
             unlink($this->getLockFile($address));
-            
-            $this->info(sprintf('Stopped the espier web server listening on http://%s', $address));        
+
+            $this->info(sprintf('Stopped the espier web server listening on http://%s', $address));
         } else {
             return 1;
-        }        
+        }
     }
 
     protected function getOptions()
